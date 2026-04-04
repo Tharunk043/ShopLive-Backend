@@ -1,7 +1,5 @@
 package com.practise.demo.security;
 
-
-import java.time.Duration;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,29 +30,40 @@ public class WebSecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
+                // Enable CORS
                 .cors(cors -> {})
+
+                // Disable CSRF for stateless REST APIs
                 .csrf(csrf -> csrf.disable())
 
+                // No sessions (JWT-based)
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
 
+                // Authorization rules
                 .authorizeHttpRequests(auth -> auth
+
+                        // Allow CORS preflight requests
+                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
 
                         // =====================
                         // PUBLIC AUTH ROUTES
                         // =====================
-                        .requestMatchers(
+                        .requestMatchers("/ws/**").permitAll()
+
+                                .requestMatchers(
                                 "/auth/login",
                                 "/auth/google",
                                 "/auth/refresh",
-                                "/register"
+                                "/register",
+                                "/actuator/health"
                         ).permitAll()
 
                         // =====================
                         // PRODUCTS SECURITY
                         // =====================
-                        // Anyone logged in can VIEW products & images
+                        // Anyone can VIEW products
                         .requestMatchers(HttpMethod.GET, "/products/**").permitAll()
 
                         // 🔒 Only ADMIN can upload or delete products
@@ -72,13 +81,11 @@ public class WebSecurityConfig {
                         .anyRequest().authenticated()
                 )
 
-
+                // JWT filter
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
-
-
 
     @Bean
     public AuthenticationManager authenticationManager(HttpSecurity http) throws Exception {
@@ -96,10 +103,17 @@ public class WebSecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
 
-        config.setAllowedOrigins(List.of("http://localhost:5173"));
+        // Allow local frontend + Render deployed frontend
+        config.setAllowedOriginPatterns(List.of(
+                "http://localhost:5173",
+                "https://*.onrender.com",
+                "https://*.netlify.app",
+                "https://*.vercel.app"
+        ));
+
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-        config.setAllowedHeaders(List.of("Authorization", "Content-Type"));
-        config.setAllowCredentials(true); // needed if you later use cookies
+        config.setAllowedHeaders(List.of("*"));
+        config.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource source =
                 new UrlBasedCorsConfigurationSource();
@@ -107,10 +121,10 @@ public class WebSecurityConfig {
 
         return source;
     }
+
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
-
 
 }

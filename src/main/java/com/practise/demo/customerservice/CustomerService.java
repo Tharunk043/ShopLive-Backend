@@ -2,6 +2,7 @@ package com.practise.demo.customerservice;
 
 import com.practise.demo.DTO.CustomerDTO;
 import com.practise.demo.DTO.OrderDTO;
+import com.practise.demo.GlobalHandling.CustomerNotFoundException;
 import com.practise.demo.entity.Customer;
 import com.practise.demo.entity.Order;
 import com.practise.demo.repository.OrderRepository;
@@ -74,7 +75,7 @@ public class CustomerService {
 
 		Customer c = customerRepo.findById(id)
 				.orElseThrow(() ->
-						new RuntimeException("Customer not found: " + id)
+						new CustomerNotFoundException("Customer not found with : " + id)
 				);
 
 		return toDTO(c);

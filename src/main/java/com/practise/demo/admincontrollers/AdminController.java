@@ -1,6 +1,8 @@
 package com.practise.demo.admincontrollers;
 
+import com.practise.demo.DTO.OrderStatusUpdate;
 import com.practise.demo.entity.Order;
+import com.practise.demo.kakfa.OrderEventProducer;
 import com.practise.demo.product.Product;
 import com.practise.demo.product.ProductService;
 import com.practise.demo.repository.OrderRepository;
@@ -9,6 +11,7 @@ import com.practise.demo.security.UserRepo;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -24,6 +27,10 @@ public class AdminController {
 
     @Autowired
     private UserRepo userRepo;
+    @Autowired
+    private OrderEventProducer orderEventProducer;
+    @Autowired
+    private SimpMessagingTemplate messagingTemplate;
 
     @Autowired
     private ProductService productService;
@@ -129,6 +136,13 @@ public class AdminController {
                 .map(o -> {
                     o.setStatus(status);
                     orderRepo.save(o);
+
+                    // 🔥 Direct WebSocket push
+                    messagingTemplate.convertAndSend(
+                            "/topic/order-status",
+                            new OrderStatusUpdate(orderId, status)
+                    );
+
                     return ResponseEntity.ok().build();
                 })
                 .orElse(ResponseEntity.notFound().build());

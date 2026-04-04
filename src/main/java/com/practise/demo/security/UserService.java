@@ -19,8 +19,10 @@ public class UserService {
     private final JwtService jwtService;
     private final CustomUserDetailsService userDetailsService;
 
-    public UserService(UserRepo userRepo, PasswordEncoder passwordEncoder,
-                       AuthenticationManager authenticationManager, JwtService jwtService,
+    public UserService(UserRepo userRepo,
+                       PasswordEncoder passwordEncoder,
+                       AuthenticationManager authenticationManager,
+                       JwtService jwtService,
                        CustomUserDetailsService userDetailsService) {
         this.userRepo = userRepo;
         this.passwordEncoder = passwordEncoder;
@@ -37,7 +39,7 @@ public class UserService {
         // Encrypt password
         user.setPassword(passwordEncoder.encode(user.getPassword()));
 
-        // ✅ Assign default role if missing
+        // Assign default role if missing
         if (user.getRoles() == null || user.getRoles().isEmpty()) {
             user.setRoles(List.of("ROLE_USER"));
         }
@@ -45,9 +47,8 @@ public class UserService {
         return userRepo.save(user);
     }
 
-
     // =========================
-    // LOGIN / AUTH
+    // LOGIN / AUTH (DO NOT CACHE)
     // =========================
     public String verify(User user) {
 
@@ -59,8 +60,6 @@ public class UserService {
         );
 
         if (authentication.isAuthenticated()) {
-
-            // We only need username now
             return jwtService.generateAccessToken(user.getName());
         }
 
@@ -68,18 +67,21 @@ public class UserService {
     }
 
     // =========================
-    // GET USER
+    // GET USER BY ID (CACHED)
     // =========================
+    @Cacheable(value = "users", key = "#id")
     public Optional<User> getUserById(String id) {
-        System.out.println("📌 Fetching from Database...");
+        System.out.println("📌 Fetching user by ID from Database...");
         return userRepo.findById(id);
     }
+
     // =========================
-// GET USER BY NAME
-// =========================
+    // GET USER BY NAME (CACHED)
+    // =========================
+    @Cacheable(value = "users", key = "#name")
     public User getUserByName(String name) {
+        System.out.println("📌 Fetching user by NAME from Database...");
         return userRepo.findByName(name)
                 .orElseThrow(() -> new RuntimeException("User not found: " + name));
     }
-
 }

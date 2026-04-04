@@ -121,7 +121,8 @@ public class UserRegistration {
 		return Map.of(
 				"customerId", user.getId(),
 				"accessToken", accessToken,
-				"refreshToken", refreshToken
+				"refreshToken", refreshToken,
+				"username",user.getName().split("@")[0]
 		);
 	}
 
