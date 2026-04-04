@@ -14,6 +14,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
@@ -78,8 +81,17 @@ public class AdminController {
     // ==========================
 
     @GetMapping("/customers")
-    public List<User> getAllCustomers() {
-        return userRepo.findAll();
+    public Page<User> getAllCustomers(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "") String search
+    ) {
+        Pageable pageable = PageRequest.of(page, size);
+        if (search == null || search.trim().isEmpty()) {
+            return userRepo.findAll(pageable);
+        } else {
+            return userRepo.findByNameContainingIgnoreCase(search, pageable);
+        }
     }
 
     @DeleteMapping("/customers/{id}")
