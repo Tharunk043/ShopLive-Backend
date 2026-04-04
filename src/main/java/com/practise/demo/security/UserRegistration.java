@@ -36,7 +36,24 @@ public class UserRegistration {
 	// REGISTER
 	// =========================
 	@PostMapping("/register")
-	public ResponseEntity<RegisterDTO> getregister(@RequestBody User user) {
+	public ResponseEntity<?> getregister(@RequestBody User user) {
+
+		if (user.getName() == null || user.getName().trim().length() < 3) {
+			return ResponseEntity.badRequest().body(Map.of("message", "Username must be at least 3 characters long."));
+		}
+
+		if (user.getPassword() == null || user.getPassword().length() < 6) {
+			return ResponseEntity.badRequest().body(Map.of("message", "Password must be at least 6 characters long."));
+		}
+
+		if (userRepo.findByName(user.getName().trim()).isPresent()) {
+			return ResponseEntity.badRequest().body(Map.of("message", "Username already exists. Please choose another."));
+		}
+
+		user.setName(user.getName().trim());
+		if (user.getEmail() != null) {
+			user.setEmail(user.getEmail().trim().toLowerCase());
+		}
 
 		User savedUser = userservice.saveUser(user);
 
