@@ -95,4 +95,14 @@ public class Order {
     public void setStatus(String status) {
         this.status = status;
     }
+
+    private String stripeSessionId;
+
+    public String getStripeSessionId() {
+        return stripeSessionId;
+    }
+
+    public void setStripeSessionId(String stripeSessionId) {
+        this.stripeSessionId = stripeSessionId;
+    }
 }

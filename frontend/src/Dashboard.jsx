@@ -132,11 +132,33 @@ useEffect(() => {
   }, [logout]);
 
   useEffect(() => {
-    loadOrders();
+    // 💳 Check for Stripe checkout redirect verification
+    const sessionId = new URLSearchParams(window.location.search).get("session_id");
+    if (sessionId) {
+      setLoading(true);
+      apiFetch(`/payment/verify?sessionId=${sessionId}`, { method: "POST" })
+        .then(async (res) => {
+          if (res.ok) {
+            // Remove session_id parameter from URL to prevent verifying multiple times
+            navigate("/dashboard", { replace: true });
+          } else {
+            alert("❌ Payment verification failed.");
+          }
+        })
+        .catch(() => {
+          alert("❌ Error verifying payment.");
+        })
+        .finally(() => {
+          loadOrders();
+        });
+    } else {
+      loadOrders();
+    }
+
     const onFocus = () => loadOrders();
     window.addEventListener("focus", onFocus);
     return () => window.removeEventListener("focus", onFocus);
-  }, [loadOrders]);
+  }, [loadOrders, navigate]);
 
   useEffect(() => {
     orders.forEach(o => {

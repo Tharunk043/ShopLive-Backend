@@ -12,4 +12,6 @@ public interface OrderRepository
 
     // 🔥 Correct Mongo field name + type
     List<Order> findByCustomerIdOrderByCreatedAtDesc(String customerId);
+
+    List<Order> findByStripeSessionId(String stripeSessionId);
 }

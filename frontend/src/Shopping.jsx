@@ -244,28 +244,32 @@ export default function Shopping() {
         return;
       }
 
-      const res = await fetch(API_ORDERS, {
+      // Call the Stripe checkout endpoint
+      const res = await fetch("https://demo-springboot-zdym.onrender.com/payment/checkout", {
         method: "POST",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
         body: JSON.stringify(items)
       });
 
       if (res.status === 429) {
-        alert("🚫 Too many orders. Please wait 1 minute and try again.");
+        alert("🚫 Too many requests. Please wait 1 minute and try again.");
         return;
       }
       if (!res.ok) throw new Error();
 
-      setCart({});
-      setSuccessOpen(true);
-      setSidebarOpen(false);
+      const data = await res.json();
+      if (data.url) {
+        // Redirect user to Stripe hosted checkout page
+        window.location.href = data.url;
+      } else {
+        throw new Error("Invalid checkout session");
+      }
     } catch {
-      alert("❌ Session expired. Please login again.");
-      logout();
+      alert("❌ Session expired or payment failed. Please try again.");
     } finally {
       setPlacing(false);
     }
-  }, [placing, cart, products, token, logout]);
+  }, [placing, cart, products, token]);
 
   return (
     <Box sx={{ minHeight: "100vh", bgcolor: "#020617", color: "white" }}>
