@@ -6,6 +6,8 @@ type: Opaque
 data:
   # Base64 encoded value of 'supersecretkey'. Change this for production!
   jwt-secret: c3VwZXJzZWNyZXRrZXk=
+  # Base64 encoded value of stripe key placeholder. Change this for production!
+  stripe-secret-key: c2tfdGVzdF9wbGFjZWhvbGRlcg==
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -44,6 +46,11 @@ spec:
                 secretKeyRef:
                   name: backend-secret
                   key: jwt-secret
+            - name: STRIPE_SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: backend-secret
+                  key: stripe-secret-key
           resources:
             limits:
               cpu: "1"
