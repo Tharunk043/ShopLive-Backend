@@ -105,6 +105,10 @@ public class WebSecurityConfig {
 
         // Allow local frontend + Render deployed frontend
         config.setAllowedOriginPatterns(List.of(
+                "http://localhost",
+                "http://localhost:*",
+                "http://127.0.0.1",
+                "http://127.0.0.1:*",
                 "http://localhost:5173",
                 "https://*.onrender.com",
                 "https://*.netlify.app",
