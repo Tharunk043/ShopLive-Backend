@@ -4,6 +4,7 @@ import { motion } from "framer-motion"; // eslint-disable-line
 import Particles from "react-tsparticles";
 import { loadSlim } from "tsparticles-slim";
 import Typewriter from "typewriter-effect";
+import { API_BASE } from "./config";
 
 import {
   Box,
@@ -57,7 +58,7 @@ export default function Register() {
 
     try {
       const res = await fetch(
-        "https://demo-springboot-zdym.onrender.com/register",
+        API_BASE + "/register",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },

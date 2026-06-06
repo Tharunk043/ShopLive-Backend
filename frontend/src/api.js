@@ -1,4 +1,4 @@
-const API_BASE = "https://demo-springboot-zdym.onrender.com";
+import { API_BASE } from "./config";
 
 let isRefreshing = false;
 let refreshPromise = null;

@@ -5,6 +5,7 @@ import { jwtDecode } from "jwt-decode";
 import Particles from "react-tsparticles";
 import { loadSlim } from "@tsparticles/slim";
 import Typewriter from "typewriter-effect";
+import { API_BASE } from "./config";
 
 import {
   Container,
@@ -50,7 +51,7 @@ export default function Login({ onLogin }) {
 
     try {
       const res = await fetch(
-        "https://demo-springboot-zdym.onrender.com/auth/login",
+        API_BASE + "/auth/login",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -75,7 +76,7 @@ export default function Login({ onLogin }) {
 
     try {
       const res = await fetch(
-        "https://demo-springboot-zdym.onrender.com/auth/google",
+        API_BASE + "/auth/google",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },

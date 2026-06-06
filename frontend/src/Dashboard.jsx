@@ -2,6 +2,7 @@ import { useEffect, useState, useCallback } from "react";
 import { motion } from "framer-motion"; // eslint-disable-line
 import { useNavigate } from "react-router-dom";
 import { apiFetch } from "./api";
+import { WS_BASE } from "./config";
 import SockJS from "sockjs-client";
 import { Client } from "@stomp/stompjs";
 import {
@@ -72,7 +73,7 @@ useEffect(() => {
 
 }, [selectedOrder?.status]);
   useEffect(() => {
-  const socket = new SockJS("https://demo-springboot-zdym.onrender.com/ws");
+  const socket = new SockJS(WS_BASE);
   const stompClient = new Client({
     webSocketFactory: () => socket,
     reconnectDelay: 5000,

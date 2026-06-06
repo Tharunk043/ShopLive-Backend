@@ -43,10 +43,11 @@ import {
   Divider
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
+import { API_BASE } from "./config";
 
-const API_PRODUCTS = "https://demo-springboot-zdym.onrender.com/products";
-const API_ORDERS = "https://demo-springboot-zdym.onrender.com/orders";
-const API_REVIEWS = "https://demo-springboot-zdym.onrender.com/reviews";
+const API_PRODUCTS = API_BASE + "/products";
+const API_ORDERS = API_BASE + "/orders";
+const API_REVIEWS = API_BASE + "/reviews";
 
 const getId = (p) => p?.id || p?._id || "unknown";
 const truncate = (str, len = 25) => str?.length > len ? str.substring(0, len) + "..." : str;
@@ -245,7 +246,7 @@ export default function Shopping() {
       }
 
       // Call the Stripe checkout endpoint
-      const res = await fetch("https://demo-springboot-zdym.onrender.com/payment/checkout", {
+      const res = await fetch(API_BASE + "/payment/checkout", {
         method: "POST",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
         body: JSON.stringify(items)

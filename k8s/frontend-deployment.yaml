@@ -16,8 +16,8 @@ spec:
     spec:
       containers:
         - name: frontend
-          # Replace 'YOUR_GITHUB_USERNAME_OR_ORG' with your GitHub owner name
-          image: ghcr.io/YOUR_GITHUB_USERNAME_OR_ORG/frontend:latest
+          image: shoplive-frontend:local
+          imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 80
               name: http

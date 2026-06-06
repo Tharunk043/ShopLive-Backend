@@ -1,4 +1,5 @@
 import { useEffect, useState, useCallback } from "react";
+import { API_BASE } from "./config";
 import {
   Box,
   Button,
@@ -34,7 +35,7 @@ import {
   LayoutDashboard
 } from "lucide-react";
 
-const API = "https://demo-springboot-zdym.onrender.com/admin";
+const API = API_BASE + "/admin";
 
 function formatDate(d) {
   if (!d) return "N/A";
